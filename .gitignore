@@ -1,4 +1,5 @@
 # Ignore virtual environments
+<<<<<<< HEAD
 **/venv/
 **/.env/
 **/.venv/
@@ -6,3 +7,10 @@
 
 # reading material
 *.pdf
+=======
+venv/
+.env/
+.venv/
+env/
+Exercise1/
+>>>>>>> b4310f168214db05ab02e23e0c48ef68ef12a948
