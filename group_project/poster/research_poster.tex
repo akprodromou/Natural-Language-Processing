@@ -1,0 +1,268 @@
+\documentclass[final,t]{beamer}
+\mode<presentation>
+{
+  \usetheme{Berlin}
+}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsthm,amssymb,latexsym}
+\usepackage[size=a0,scale=1.2,orientation=portrait]{beamerposter}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{multicol}
+\usepackage{tcolorbox}
+
+% Colors
+\definecolor{headerblue}{RGB}{0,51,102}
+\definecolor{accentblue}{RGB}{0,102,204}
+\definecolor{lightgray}{RGB}{240,240,240}
+
+\setbeamercolor{block title}{fg=white,bg=headerblue}
+\setbeamercolor{block body}{fg=black,bg=lightgray}
+
+\title{\huge Misinformation Detection using NLP:\\The RAEmoLLM Framework}
+\author{\Large Antonis Prodromou and Orestis Georgiadis}
+\institute{\large MSc Data and Web Science, Aristotle University of Thessaloniki\\DWS104 Natural Language Processing}
+\date{\large January 13, 2026}
+
+\begin{document}
+\begin{frame}[t]
+\begin{columns}[t]
+
+%% LEFT COLUMN %%
+\begin{column}{.30\linewidth}
+
+\begin{block}{Introduction}
+\large
+Social media has become a primary vector for misinformation dissemination. Manual fact-checking is impractical due to massive content volume, and conventional methods are reactive—only counteracting misinformation after it gains traction.
+
+\vspace{0.5cm}
+\textbf{Key Challenge:} Misinformation relies on context and implication rather than outright lies, making detection difficult.
+\end{block}
+
+\vspace{1cm}
+
+\begin{block}{Research Objectives}
+\large
+\begin{itemize}
+\item Address \textbf{cross-domain misinformation detection} using in-context learning
+\item Leverage \textbf{affective (emotional) information} to improve Large Language Models' detection capabilities
+\item Develop a framework that works \textbf{without fine-tuning} models
+\item Identify emotional patterns consistent across different misinformation topics
+\end{itemize}
+\end{block}
+
+\vspace{1cm}
+
+\begin{block}{Core Innovation}
+\large
+\begin{tcolorbox}[colback=accentblue!10,colframe=accentblue,width=\linewidth]
+\textbf{Key Insight:} Misinformation authors use specific emotional language patterns that remain consistent across topics, regardless of the subject matter.
+\end{tcolorbox}
+\end{block}
+
+\vspace{1cm}
+
+\begin{block}{Dataset}
+\large
+\textbf{COCO Dataset}\\
+Annotated Twitter dataset of COVID-19 conspiracy theories
+\begin{itemize}
+\item Real-world social media content
+\item Labeled conspiracy vs. legitimate news
+\item Cross-domain applicability
+\end{itemize}
+\end{block}
+
+\end{column}
+
+%% CENTER COLUMN %%
+\begin{column}{.38\linewidth}
+
+\begin{block}{RAEmoLLM Framework}
+\large
+A \textbf{Retrieval Augmented Generation (RAG)} framework using emotional information and in-context learning.
+
+\vspace{1cm}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2.5cm, auto, thick]
+  % Styles
+  \tikzstyle{module} = [rectangle, draw, fill=accentblue!20, 
+      text width=8cm, text centered, rounded corners, minimum height=3cm]
+  \tikzstyle{arrow} = [thick,->,>=stealth]
+  
+  % Nodes
+  \node [module] (index) {
+    \textbf{1. Index Construction}\\[0.5cm]
+    Uses \textit{Emollama-chat-7b}\\
+    Generates affective embeddings\\[0.3cm]
+    \textbf{Affective Labels:}\\
+    • Emotion Intensity\\
+    • Valence\\
+    • Certainty
+  };
+  
+  \node [module, below of=index] (retrieval) {
+    \textbf{2. Retrieval Module}\\[0.5cm]
+    Finds 4 most similar tweets\\
+    using cosine similarity\\[0.3cm]
+    Used as 4-shot prompts for\\
+    in-context learning
+  };
+  
+  \node [module, below of=retrieval] (inference) {
+    \textbf{3. Inference Module}\\[0.5cm]
+    Uses retrieved examples as\\
+    few-shot demonstrations\\[0.3cm]
+    Employs pre-trained LLMs:\\
+    Mistral-7b, ChatGPT
+  };
+  
+  % Arrows
+  \draw [arrow] (index) -- (retrieval);
+  \draw [arrow] (retrieval) -- (inference);
+\end{tikzpicture}
+\end{center}
+\end{block}
+
+\vspace{1cm}
+
+\begin{block}{Experimental Approaches}
+\large
+\begin{enumerate}
+\item \textbf{Zero-shot model} (baseline)
+\item \textbf{RAG with Vreg} (valence regularization)
+\item \textbf{RAG with Vreg + Cert + concatenation}
+\item \textbf{RAG with Vreg + Cert + score averaging}
+\end{enumerate}
+\end{block}
+
+\end{column}
+
+%% RIGHT COLUMN %%
+\begin{column}{.30\linewidth}
+
+\begin{block}{Key Findings}
+\large
+
+\textbf{1. RAG Significantly Outperforms Zero-Shot}
+\begin{itemize}
+\item RAEmoLLM F1-score: \textbf{0.7339}
+\item Zero-shot baseline: \textbf{0.4407}
+\item \textbf{66.5\% improvement}
+\end{itemize}
+
+\vspace{0.8cm}
+
+\textbf{2. Certainty as Differentiating Factor}
+\begin{itemize}
+\item \textbf{Statistically significant} difference (p=0.0041)
+\item Legitimate news: \textbf{HIGHER certainty}
+\item Conspiracy theories: \textbf{LOWER certainty}
+\item Use suggestive vs. direct language
+\end{itemize}
+
+\vspace{0.8cm}
+
+\textbf{3. Embedding Concatenation Increases Overfitting}
+\begin{itemize}
+\item Doubling dimensions (4096→8192)
+\item Reduced generalization performance
+\end{itemize}
+
+\vspace{0.8cm}
+
+\textbf{4. Score Averaging: No Improvement}
+\begin{itemize}
+\item Averaging affective scores yielded no improvement
+\item Valence alone performed optimally
+\end{itemize}
+
+\vspace{0.8cm}
+
+\textbf{5. Emotional Detection Highly Effective}
+\begin{itemize}
+\item Affective nature enables correct categorization
+\item Framework excels with proper few-shot demonstrations
+\end{itemize}
+
+\end{block}
+
+\vspace{1cm}
+
+\begin{block}{Performance Comparison}
+\large
+\begin{center}
+\begin{tabular}{lc}
+\toprule
+\textbf{Method} & \textbf{F1-Score} \\
+\midrule
+Zero-shot & 0.4407 \\
+\textbf{RAG with Vreg} & \textbf{0.7339} \\
+RAG + Concatenation & 0.68 (approx.) \\
+RAG + Averaging & 0.73 (approx.) \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{block}
+
+\vspace{1cm}
+
+\begin{block}{Conclusions}
+\large
+\begin{itemize}
+\item \textbf{Affective information is a powerful signal} for cross-domain misinformation detection
+\item Emotional patterns remain \textbf{consistent across topics}
+\item Few-shot learning with emotionally similar examples \textbf{significantly improves accuracy}
+\item Simple RAG approach outperforms complex methods
+\end{itemize}
+\end{block}
+
+\vspace{1cm}
+
+\begin{block}{Future Directions}
+\large
+\begin{itemize}
+\item Experiment with different weighting schemes
+\item Develop prompts to identify "suggestive" tones
+\item Optimize balance between valence, certainty, and emotions
+\end{itemize}
+\end{block}
+
+\end{column}
+
+\end{columns}
+
+\vspace{1cm}
+
+\begin{block}{References}
+\small
+\begin{multicols}{2}
+1. Allcott \& Gentzkow (2017). Social Media and Fake News in the 2016 Election. \textit{Journal of Economic Perspectives}.
+
+2. Carrasco-Farré (2022). The Fingerprints of Misinformation. \textit{Humanities and Social Sciences Communications}.
+
+3. Langguth et al. (2023). COCO: An Annotated Twitter Dataset. \textit{Journal of Computational Social Science}.
+
+4. Lazer et al. (2023). The Science of Fake News. \textit{CORR}.
+
+5. Liu et al. (2024). EmoLLMs: A Series of Emotional Large Language Models. \textit{KDD '24}.
+
+6. Pelrine et al. (2023). Towards Reliable Misinformation Mitigation. \textit{EMNLP 2023}.
+
+7. Islam et al. (2021). COVID-19 Vaccine Rumors and Conspiracy Theories. \textit{PLOS ONE}.
+
+8. Hart \& Childers (2004). Verbal Certainty in American Politics. \textit{Presidential Studies Quarterly}.
+
+9. Pezzuti et al. (2021). Certainty in Language Increases Consumer Engagement. \textit{Journal of Interactive Marketing}.
+
+10. Frisli (2025). Language, Power, and Misinformation. \textit{Social Media + Society}.
+\end{multicols}
+\end{block}
+
+\end{frame}
+\end{document}

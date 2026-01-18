@@ -1,0 +1,120 @@
+\begin{tikzpicture}
+
+% styles
+\tikzset{
+    box/.style={
+        draw,
+        rectangle,
+        rounded corners,
+        minimum width=5cm,
+        text width=6cm,
+        align=left,
+        inner sep=8pt,
+        fill=blue!5,
+        font=\small
+    },
+    llm/.style={
+        draw,
+        rectangle,
+        fill=orange!10,
+        text width=3cm,
+        align=center,
+        minimum height=1.3cm,
+        font=\small\bfseries
+    },
+    prediction/.style={
+        draw,
+        rectangle,
+        fill=green!10,
+        text width=3.2cm,
+        align=center,
+        minimum height=1.3cm,
+        font=\small\bfseries
+    },
+    arrow/.style={-Stealth, thick},
+    title/.style={font=\normalsize\bfseries, anchor=west}
+}
+
+% Zero-Shot Inference
+\begin{scope}[shift={(0,0)}]
+
+    \node[box] (zs_prompt) {
+        \textbf{Task prompt}\\
+        \textit{"Instruction":} \{Classify the text...\}\\
+        \textit{"Target text":} \{The coronavirus is...\}
+    };
+
+    % title above the box
+    \node[
+        title,
+        below=-0.5mm of zs_prompt.north west,
+        anchor=south west
+    ] {Zero-Shot Inference};
+
+    \node[llm, right=2.2cm of zs_prompt] (zs_llm) {Pre-trained LLM};
+    \node[prediction, right=2.2cm of zs_llm] (zs_pred) {Prediction};
+
+    \draw[arrow] (zs_prompt.east) -- (zs_llm.west);
+    \draw[arrow] (zs_llm.east) -- (zs_pred.west);
+
+\end{scope}
+
+% Few-Shot, Implicit Inference
+\begin{scope}[shift={(0,-4.0)}]
+
+    \node[box] (fsi_prompt) {
+        \textbf{Task prompt}\\
+        \textit{"Instruction":} \{Classify the text...\}\\
+        \textit{"Target text":} \{The coronavirus is...\}\\
+        \textbf{Examples selected via cosine similarity:}\\
+        \textit{"Example 1":} \{Text 1 [...] - Label: "2. Conspiracy"\}\\
+        \dots\\
+        \textit{"Example 4":} \{Text 4 [...] - Label: "2. Conspiracy"\}
+    };
+
+    % title placed above the box
+    \node[
+        title,
+        below=0mm of fsi_prompt.north west,
+        anchor=south west
+    ] {Few-Shot, Implicit Inference};
+
+    \node[llm, right=2.2cm of fsi_prompt] (fsi_llm) {Pre-trained LLM};
+    \node[prediction, right=2.2cm of fsi_llm] (fsi_pred) {Prediction};
+
+    \draw[arrow] (fsi_prompt.east) -- (fsi_llm.west);
+    \draw[arrow] (fsi_llm.east) -- (fsi_pred.west);
+
+\end{scope}
+
+
+% Few-Shot, Explicit Inference
+\begin{scope}[shift={(0,-10.0)}]
+
+    \node[box] (fse_prompt) {
+        \textbf{Task prompt}\\
+        \textit{"Instruction":} \{Classify the text...\}\\
+        \textit{"Target text":} \{The coronavirus is...\}\\
+        \textbf{Examples selected via cosine similarity:}\\
+        \textit{"Example 1":} \{Text 1 [...] - Label: "2. Conspiracy" - Sentiment intensity: 0.413\}\\
+        \dots\\
+        \textit{"Example 4":} \{Text 4 [...] - Label: "2. Conspiracy" - Sentiment intensity: 0.620\}
+    };
+
+    % title placed above the box
+    \node[
+        title,
+        below=0mm of fse_prompt.north west,
+        anchor=south west
+    ] {Few-Shot, Explicit Inference};
+
+    \node[llm, right=2.2cm of fse_prompt] (fse_llm) {Pre-trained LLM};
+    \node[prediction, right=2.2cm of fse_llm] (fse_pred) {Prediction};
+
+    \draw[arrow] (fse_prompt.east) -- (fse_llm.west);
+    \draw[arrow] (fse_llm.east) -- (fse_pred.west);
+
+\end{scope}
+
+
+\end{tikzpicture}

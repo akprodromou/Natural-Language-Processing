@@ -1,0 +1,41 @@
+\begin{tikzpicture}[
+    node distance=1.2cm and 0.8cm,
+    % stage style with smaller font
+    stage/.style={rectangle, draw=black, thick, fill=blue!5, text width=3cm, align=center, minimum height=1.2cm, font=\footnotesize\sffamily},
+    % llm style with smaller font
+    llm/.style={circle, draw=red!70, fill=red!5, thick, font=\footnotesize\sffamily, align=center, inner sep=1pt, minimum size=1.8cm},
+    arrow/.style={-{Stealth[scale=1.0]}, thick}
+]
+
+    % Stage 1: Implicit Index Construction
+    \node[stage] (implicit) {Index Construction \\ \textbf{(Implicit Extraction)} \\ \textit{get\_embs.py}};
+    
+    % Stage 2: Explicit Index Construction
+    \node[stage, right=of implicit] (explicit) {Index Construction \\ \textbf{(Explicit Labeling)} \\ \textit{get\_Emolabel.py}};
+    
+    % Stage 3: Retrieval
+    \node[stage, right=of explicit] (retrieval) {Retrieval \\ \textit{retrieval\_COCO.py}};
+    
+    % Stage 4: Inference
+    \node[stage, right=of retrieval] (inference) {Inference \\ \textbf{(Label Predictions)} \\ \textit{inference.py}};
+
+    % --- LLM Involvement Circles (North) ---
+    
+    % Circle for Implicit
+    \node[llm, above=0.5cm of implicit] (emo1) {Emotional LLM \\ (EmoLLaMA-7B)};
+    \draw[dashed, gray] (emo1) -- (implicit);
+
+    % Circle for Explicit
+    \node[llm, above=0.5cm of explicit] (emo2) {Emotional LLM \\ (EmoLLaMA-7B)};
+    \draw[dashed, gray] (emo2) -- (explicit);
+
+    % Circle for Inference
+    \node[llm, above=0.5cm of inference] (offshore) {Traditional LLMs \\ (Mistral, GPT-4o)};
+    \draw[dashed, gray] (offshore) -- (inference);
+
+    % --- Connecting Arrows ---
+    \draw[arrow] (implicit) -- (explicit);
+    \draw[arrow] (explicit) -- (retrieval);
+    \draw[arrow] (retrieval) -- (inference);
+
+\end{tikzpicture}
