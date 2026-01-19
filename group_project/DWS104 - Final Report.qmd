@@ -3,8 +3,8 @@ title: "Misinformation Detection using NLP"
 subtitle: "The RAEmoLLM Framework: A Review"
 
 author:
-- name: Antonis Prodromou
-- name: Orestis Georgiadis
+  - name: Antonis Prodromou
+  - name: Orestis Georgiadis
 
 date: today
 date-format: long
@@ -19,28 +19,16 @@ format:
     colorlinks: true
     highlight-style: github
     lang: en
-
-    # Code execution
     echo: false
     warning: false
-
-    # Fonts
     mainfont: "Roboto"
     sansfont: "Roboto"
     monofont: "Menlo"
-
-    # Tables
     df-print: kable
-
-    # Line spacing
     linestretch: 1.7
-
-    # Start ToC on a new page
     include-before-body:
       text: |
         \clearpage
-
-    # Optional LaTeX tweaks
     include-in-header:
       text: |
         \pagenumbering{gobble}
@@ -65,8 +53,14 @@ format:
         Aristotle University of Thessaloniki
         \end{center}
         }
-
     babel-lang: "none"
+  
+  html:
+    toc: true
+    number-sections: true
+    df-print: paged
+    code-fold: true
+    embed-resources: true
     css: styles.css
 ---
 
